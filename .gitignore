@@ -6,3 +6,6 @@
 
 # jetbrains related stuff
 .idea
+
+# macOS indexing file
+.DS_Store

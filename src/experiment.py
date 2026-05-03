@@ -21,13 +21,13 @@ no_tools_config = types.GenerateContentConfig(
 context_prompt = "You are a Nuxt 4 developer. Respond with a simple answer, using as view lines of code as possible. Only use the official, stable, and public API. No comments, unless absolutely necessary."
 
 # loading the test cases
-with open("experiment/experiment.json", "r") as f:
+with open("src/experiment.json", "r") as f:
     test_cases = json.load(f)
 
 print("\n--- Starting 3-condition Experiment... (writing to results.md) ---\n")
 
 # running the experiment
-with open("experiment/results.md", "w") as f:
+with open("src/results.md", "w") as f:
     f.write("# Nuxt 4 DAG Experiment Results\n\n")
     f.write(f"**Context Prompt:** {context_prompt}\n\n")
     f.write("---\n\n")
@@ -76,4 +76,4 @@ with open("experiment/results.md", "w") as f:
 
         f.write("---\n\n")
 
-print("\nDone! Open 'results.md' to see output.")
+print(f"\nDone! Open {f.name} to see output.")

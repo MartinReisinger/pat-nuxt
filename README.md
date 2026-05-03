@@ -3,7 +3,7 @@
 ## Conditions
 
 1. Baseline. The LLM relies only on its internal training data.
-2. Simple DAG. 1. search the docs via a dag for keywords, 2. then answer with the search results in context.
+2. Simple DAG. Search the docs via a dag for keywords, then answer with the search results in context.
 3. Perfect Information. The LLM is already provided with the correct documentation in the user prompt.
 
 ## Setup
@@ -20,4 +20,15 @@ source .venv/bin/activate
 ```bash
 pip install google-genai
 pip install python-dotenv
+```
+
+3. set your free GEMINI_API_KEY in the .env file
+    - go to https://aistudio.google.com/app/api-keyshttps://aistudio.google.com/app/api-keys
+    - create a project & api key
+    - paste it in the [.env.example](.env.example) and remove the '.example'
+
+4. run the experiment.py
+
+```bash
+python3 src/experiment.py
 ```

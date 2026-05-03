@@ -3,7 +3,7 @@
 ## Files
 
 ### Experiment json file
-- [experiment.json](experiment/experiment.json)
+- [experiment.json](src/experiment.json)
 
 #### Use
 
