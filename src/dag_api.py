@@ -2,18 +2,20 @@ import subprocess
 import os
 
 
-def run_search(keywords, search_dir="dag_content"):
+def run_search(keywords):
     """
     Takes an array of keywords and runs a ripgrep (rg) command for each.
     Returns the search results as a string.
     """
+    search_dir = "dag_content"
+
     if not os.path.exists(search_dir):
         return f"Error: Directory '{search_dir}' not found."
 
     combined_results = []
 
     for kw in keywords:
-        # Sanitize keyword to prevent shell injection issues with quotes
+        # sanitize keyword to prevent shell injection (issues with quotes)
         clean_kw = kw.replace('"', '').replace("'", "")
         if not clean_kw:
             continue
@@ -21,10 +23,10 @@ def run_search(keywords, search_dir="dag_content"):
         # ripgrep-command:
         # -max-count 4: stop after 4 matches
         # -A 50: get 50 lines of context AFTER the match
-        # capture_output=True: grabs the text into Python
         command = f'rg -i "{clean_kw}" {search_dir} --max-count 4 -A 50 --no-filename --no-heading'
 
         try:
+            # capture_output=True: grabs the text into Python
             result = subprocess.run(command, shell=True, capture_output=True, text=True)
 
             # if ripgrep found something, add it to the context pool
