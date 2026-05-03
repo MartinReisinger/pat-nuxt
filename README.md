@@ -32,3 +32,11 @@ pip install python-dotenv
 ```bash
 python3 src/experiment.py
 ```
+
+## Credits & Attribution
+
+This project utilizes documentation from [Nuxt.js](https://github.com/nuxt/nuxt), licensed under the **MIT License**.
+
+* **Data Path:** `dag_content/docs/`
+* **Original Source:** [Nuxt GitHub Docs](https://github.com/nuxt/nuxt/tree/main/docs)
+* **Copyright:** (c) Nuxt.js Contributors
