@@ -23,7 +23,7 @@ pip install python-dotenv
 ```
 
 3. set your free GEMINI_API_KEY in the .env file
-    - go to https://aistudio.google.com/app/api-keyshttps://aistudio.google.com/app/api-keys
+    - go to https://aistudio.google.com/app/api-keys
     - create a project & api key
     - paste it in the [.env.example](.env.example) and remove the '.example'
 
