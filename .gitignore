@@ -1,0 +1,6 @@
+# gemini api key
+.env
+
+
+# jetbrains related stuff
+.idea
