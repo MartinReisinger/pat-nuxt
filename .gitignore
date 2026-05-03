@@ -1,6 +1,8 @@
 # gemini api key
 .env
 
+# virtual environment
+.venv
 
 # jetbrains related stuff
 .idea
