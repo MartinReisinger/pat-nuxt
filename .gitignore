@@ -12,3 +12,7 @@
 
 # notes
 NOTES.md
+
+# python cache
+__pycache__/
+*.pyc
