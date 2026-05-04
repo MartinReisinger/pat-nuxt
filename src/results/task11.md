@@ -1,6 +1,6 @@
 # Task 11
 
-**Context Prompt:** You are a Nuxt 4 developer. Respond with a simple answer, using as view lines of code as possible. Only use the official, stable, and public API. No comments, unless absolutely necessary.
+**Context Prompt:** You are a Nuxt 4 developer. Respond with a simple answer, using as few lines of code as possible. Only use the official, stable, public API. No comments and no imports, unless absolutely necessary.
 
 **Task Prompt:** write a vue component that fetches data on button click and shows a loading spinner while waiting
 
@@ -17,30 +17,28 @@ Link to Guide: https://nuxt.com/docs/4.x/getting-started/upgrade#alignment-of-pe
     <button @click="fetchData" :disabled="loading">
       {{ loading ? 'Loading...' : 'Fetch Data' }}
     </button>
-    <div v-if="data">
-      {{ data }}
-    </div>
+    <div v-if="data">{{ data }}</div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 
-const data = ref(null);
-const loading = ref(false);
+const data = ref(null)
+const loading = ref(false)
 
 const fetchData = async () => {
-  loading.value = true;
+  loading.value = true
   try {
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-    data.value = 'Data fetched successfully!';
+    // Replace with your actual API call
+    const response = await fetch('https://jsonplaceholder.typicode.com/todos/1')
+    data.value = await response.json()
   } catch (error) {
-    console.error('Error fetching data:', error);
-    data.value = 'Error loading data.';
+    console.error('Error fetching data:', error)
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 </script>
 ```
 
@@ -52,35 +50,30 @@ const fetchData = async () => {
 **LLM output:**
 
 ```vue
-<template>
-  <div>
-    <button @click="fetchData" :disabled="loading">Fetch Data</button>
-    <div v-if="loading">Loading...</div>
-    <div v-else-if="error">{{ error.message }}</div>
-    <pre v-else>{{ data }}</pre>
-  </div>
-</template>
-
-<script setup>
-import { ref } from 'vue'
-import { $fetch } from 'nitropack' // Assuming $fetch is available globally or imported
-
+<script setup lang="ts">
 const data = ref(null)
 const loading = ref(false)
-const error = ref(null)
 
-const fetchData = async () => {
+async function fetchData() {
   loading.value = true
-  error.value = null
   try {
-    data.value = await $fetch('/api/your-endpoint')
-  } catch (e) {
-    error.value = e
+    data.value = await $fetch('/api/my-data')
+  } catch (error) {
+    console.error('Error fetching data:', error)
   } finally {
     loading.value = false
   }
 }
 </script>
+
+<template>
+  <button @click="fetchData" :disabled="loading">
+    {{ loading ? 'Loading...' : 'Fetch Data' }}
+  </button>
+  <div v-if="data">
+    {{ data }}
+  </div>
+</template>
 ```
 
 ## 3. Prefect Result (task & docs -> answer)
@@ -88,16 +81,19 @@ const fetchData = async () => {
 
 ```vue
 <template>
-  <div>
-    <button @click="execute" :disabled="status === 'pending'">Fetch Data</button>
-    <div v-if="status === 'pending'">Loading...</div>
-    <div v-else-if="status === 'success'">Data: {{ data }}</div>
-    <div v-else>Error fetching data</div>
+  <button @click="execute" :disabled="status === 'pending'">
+    Fetch Data
+  </button>
+  <div v-if="status === 'pending'">
+    Loading...
+  </div>
+  <div v-else-if="status === 'success'">
+    Data: {{ data }}
   </div>
 </template>
 
 <script setup lang="ts">
-const { data, execute, status } = await useAsyncData('myData', () => $fetch('/api/data'), {
+const { data, execute, status } = await useAsyncData(() => Promise.resolve('My Data'), {
   immediate: false
 })
 </script>
@@ -106,6 +102,6 @@ const { data, execute, status } = await useAsyncData('myData', () => $fetch('/ap
 ## 4. Token Usage Comparison
 | Condition | Input Tokens | Output Tokens | Total |
 | :--- | :--- | :--- | :--- |
-| Baseline | 63 | 206 | 269 |
-| Simple DAG | 520 | 229 | 749 |
-| Perfect Info | 345 | 135 | 480 |
+| Baseline | 65 | 195 | 260 |
+| Simple DAG | 16344 | 173 | 16517 |
+| Perfect Info | 347 | 126 | 473 |

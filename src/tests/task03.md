@@ -1,7 +1,7 @@
 ---
 id: 3
 link: https://nuxt.com/docs/4.x/getting-started/upgrade#normalized-component-names
-task: set up KeepAlive on NuxtPage so a 'user-id' component inside a subfolder stays mounted between navigations
+task: set up KeepAlive on NuxtPage so a user id component inside a subfolder stays mounted between navigations
 ---
 
 ### Normalized Component Names

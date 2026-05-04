@@ -1,6 +1,6 @@
 # Task 12
 
-**Context Prompt:** You are a Nuxt 4 developer. Respond with a simple answer, using as view lines of code as possible. Only use the official, stable, and public API. No comments, unless absolutely necessary.
+**Context Prompt:** You are a Nuxt 4 developer. Respond with a simple answer, using as few lines of code as possible. Only use the official, stable, public API. No comments and no imports, unless absolutely necessary.
 
 **Task Prompt:** write a button handler that refreshes fetched data and cancels any in-flight request first
 
@@ -12,53 +12,53 @@ Link to Guide: https://nuxt.com/docs/4.x/getting-started/upgrade#removal-of-depr
 **LLM output:**
 
 ```vue
-<script setup lang="ts">
-import { useFetch } from '#app'
+<script setup>
+const { data, pending, error, refresh, execute } = await useFetch('/api/data')
 
-const { data, refresh, pending, error } = useFetch('/api/items')
-
-const handleRefresh = async () => {
+const handleClick = async () => {
   if (pending.value) {
-    // Cancel in-flight request (useFetch automatically handles cancellation viaAbortController)
+    await execute(false) // Cancel pending request
   }
   await refresh()
 }
 </script>
 
 <template>
-  <button @click="handleRefresh" :disabled="pending">
+  <button @click="handleClick" :disabled="pending">
     {{ pending ? 'Refreshing...' : 'Refresh Data' }}
   </button>
 </template>
 ```
 
 ## 2. Simple DAG Result (task -> search -> answer)
-> **Keywords used:** refetch, abort, cancel, refresh, retry
+> **Keywords used:** refresh, fetch, cancel, request, data
 
-> **Found Context:** --- Search hits for: 'refetch' --- 2. **More control over getCachedData**: The `getCachedData` function is now called every time data is fetched, even if this is caused by a watcher or calling `refreshNuxtData`. (Previously, new data was always fetched and this function was not called in these cases.) To allow more control over when to use cached data and when to refetch, the function now receives a context object with the cause of the request. 3. **Reactive key support**: You can now use comput...
+> **Found Context:** --- Search hits for: 'refresh' --- 2. **More control over getCachedData**: The `getCachedData` function is now called every time data is fetched, even if this is caused by a watcher or calling `refreshNuxtData`. (Previously, new data was always fetched and this function was not called in these cases.) To allow more control over when to use cached data and when to refetch, the function now receives a context object with the cause of the request. 3. **Reactive key support**: You can now use comput...
 
 **LLM output:**
 
 ```vue
-<template>
-  <button @click="handleRefresh">Refresh Data</button>
-</template>
+<script setup lang="ts">
+const { data, refresh } = await useFetch('/api/data')
 
-<script setup>
-import { refreshNuxtData } from '#app'
-
-const handleRefresh = () => {
-  refreshNuxtData('your-data-key')
+function handleClick () {
+  refresh({ dedupe: 'cancel' })
 }
 </script>
+
+<template>
+  <button @click="handleClick">
+    Refresh Data
+  </button>
+</template>
 ```
 
 ## 3. Prefect Result (task & docs -> answer)
 **LLM output:**
 
 ```vue
-<script setup>
-const { refresh } = await useAsyncData('data', () => $fetch('/api/data'))
+<script setup lang="ts">
+const { data, refresh } = await useAsyncData(async () => ({ message: 'Hello, Nuxt!' }))
 
 async function refreshAndCancel () {
   await refresh({ dedupe: 'cancel' })
@@ -66,13 +66,16 @@ async function refreshAndCancel () {
 </script>
 
 <template>
-  <button @click="refreshAndCancel">Refresh and Cancel</button>
+  <div>
+    <p>{{ data?.message }}</p>
+    <button @click="refreshAndCancel">Refresh and Cancel</button>
+  </div>
 </template>
 ```
 
 ## 4. Token Usage Comparison
 | Condition | Input Tokens | Output Tokens | Total |
 | :--- | :--- | :--- | :--- |
-| Baseline | 63 | 133 | 196 |
-| Simple DAG | 505 | 81 | 586 |
-| Perfect Info | 309 | 82 | 391 |
+| Baseline | 65 | 114 | 179 |
+| Simple DAG | 12473 | 85 | 12558 |
+| Perfect Info | 311 | 107 | 418 |

@@ -1,6 +1,6 @@
 # Task 9
 
-**Context Prompt:** You are a Nuxt 4 developer. Respond with a simple answer, using as view lines of code as possible. Only use the official, stable, and public API. No comments, unless absolutely necessary.
+**Context Prompt:** You are a Nuxt 4 developer. Respond with a simple answer, using as few lines of code as possible. Only use the official, stable, public API. No comments and no imports, unless absolutely necessary.
 
 **Task Prompt:** write a vue component that sets a page title and meta description
 
@@ -12,32 +12,22 @@ Link to Guide: https://nuxt.com/docs/4.x/getting-started/upgrade#unhead-v2
 **LLM output:**
 
 ```vue
-<template>
-  <Head>
-    <Title>{{ title }}</Title>
-    <Meta name="description" :content="description" />
-  </Head>
-  <slot />
-</template>
+<template><meta name="description" :content="description"></template>
 
 <script setup>
-const props = defineProps({
-  title: {
-    type: String,
-    required: true
-  },
-  description: {
-    type: String,
-    required: true
-  }
-});
+const pageTitle = 'My Awesome Page'
+const description = 'This is a description of my awesome page.'
+
+useHead({
+  title: pageTitle
+})
 </script>
 ```
 
 ## 2. Simple DAG Result (task -> search -> answer)
-> **Keywords used:** vue, component, page, title, meta
+> **Keywords used:** page, title, meta, description, seo
 
-> **Found Context:** --- Search hits for: 'vue' --- With `compatibilityVersion: 5`, client-only components (`.client.vue` files and `createClientOnly()` wrappers) now render an HTML comment (`<!--placeholder-->`) on the server instead of an empty `<div>` element.  #### Reasons for Change  When the placeholder `<div>` and the actual component root share the same tag name, Vue's runtime skips re-applying `setScopeId` during hydration. This causes scoped styles to be missing after the component mounts. Using a comment ...
+> **Found Context:** --- Search hits for: 'page' --- - **Normalized Page Names**: Page component names will [match their route names](/dag_content/4.x/getting-started/upgrade#normalized-page-component-names) for consistent `<KeepAlive>` behavior - **clearNuxtState resets to defaults**: `clearNuxtState` will [reset state to its initial value](/dag_content/4.x/getting-started/upgrade#respect-defaults-when-clearing-usestate) instead of setting it to `undefined` - **Non-async callHook**: [`callHook` may return `void`](/...
 
 **LLM output:**
 
@@ -46,14 +36,14 @@ const props = defineProps({
 useHead({
   title: 'My Page Title',
   meta: [
-    { name: 'description', content: 'My page description' }
+    { name: 'description', content: 'This is the meta description for my page.' }
   ]
 })
 </script>
 
 <template>
   <div>
-    <h1>Welcome!</h1>
+    <h1>Welcome to my page!</h1>
   </div>
 </template>
 ```
@@ -62,15 +52,17 @@ useHead({
 **LLM output:**
 
 ```vue
-<template></template>
+<template>
+  <div>
+    Page Content
+  </div>
+</template>
 
-<script setup lang="ts">
-import { useHead } from '#imports'
-
+<script setup>
 useHead({
   title: 'My Awesome Page',
   meta: [
-    { name: 'description', content: 'This is a great page about something interesting.' }
+    { name: 'description', content: 'This is a great page' }
   ]
 })
 </script>
@@ -79,6 +71,6 @@ useHead({
 ## 4. Token Usage Comparison
 | Condition | Input Tokens | Output Tokens | Total |
 | :--- | :--- | :--- | :--- |
-| Baseline | 58 | 107 | 165 |
-| Simple DAG | 534 | 84 | 618 |
-| Perfect Info | 296 | 76 | 372 |
+| Baseline | 60 | 65 | 125 |
+| Simple DAG | 15814 | 92 | 15906 |
+| Perfect Info | 298 | 72 | 370 |

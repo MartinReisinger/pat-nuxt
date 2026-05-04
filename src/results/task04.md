@@ -15,32 +15,31 @@ Link to Guide: https://nuxt.com/docs/4.x/getting-started/upgrade#scan-page-meta-
 export default defineNuxtConfig({
   hooks: {
     'pages:extend'(pages) {
-      const homePage = pages.find(page => page.name === 'index')
-      if (homePage) {
-        homePage.meta.layout = 'custom'
-      }
+      pages.find(page => page.path === '/').layout = 'custom'
     }
   }
 })
 ```
 
 ## 2. Simple DAG Result (task -> search -> answer)
-> **Keywords used:** hooks, layout, page, home, route
+> **Keywords used:** hooks, hooks, layout, home, page
 
 > **Found Context:** --- Search hits for: 'hooks' --- 2. **Changed plugin registration**: Vite plugins registered with `addVitePlugin()` and only targeting one environment (by passing `server: false` or `client: false`) will not have their `config` or `configResolved` hooks called. 3. **Shared configuration**: The `vite:extendConfig` and `vite:configResolved` hooks now work with a shared configuration rather than separate client/server configs.  #### Reasons for Change  The Vite Environment API provides:  - Better c...
 
 **LLM output:**
 
-```typescript
+```ts
 export default defineNuxtConfig({
   hooks: {
-    'pages:extend': (pages) => {
-      const page = pages.find(p => p.name === 'index')
-      if (page) {
-        page.layouts.default = 'custom'
-      }
-    }
-  }
+    'pages:extend' (pages) {
+      pages.push({
+        name: 'home',
+        path: '/',
+        file: '~/layouts/home.vue',
+        layout: 'home',
+      })
+    },
+  },
 })
 ```
 
@@ -62,6 +61,6 @@ export default defineNuxtConfig({
 ## 4. Token Usage Comparison
 | Condition | Input Tokens | Output Tokens | Total |
 | :--- | :--- | :--- | :--- |
-| Baseline | 66 | 77 | 143 |
-| Simple DAG | 524 | 85 | 609 |
+| Baseline | 66 | 54 | 120 |
+| Simple DAG | 14513 | 85 | 14598 |
 | Perfect Info | 343 | 74 | 417 |

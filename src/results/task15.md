@@ -1,6 +1,6 @@
 # Task 15
 
-**Context Prompt:** You are a Nuxt 4 developer. Respond with a simple answer, using as view lines of code as possible. Only use the official, stable, and public API. No comments, unless absolutely necessary.
+**Context Prompt:** You are a Nuxt 4 developer. Respond with a simple answer, using as few lines of code as possible. Only use the official, stable, public API. No comments and no imports, unless absolutely necessary.
 
 **Task Prompt:** write a nuxt module that logs the path of every changed file during development
 
@@ -11,48 +11,31 @@ Link to Guide: https://nuxt.com/docs/4.x/getting-started/upgrade#absolute-watch-
 ## 1. Baseline Result (task -> answer)
 **LLM output:**
 
-```ts
-// nuxt.config.ts
-export default defineNuxtConfig({
-  modules: [
-    './modules/file-logger'
-  ]
+```javascript
+export default defineNuxtModule({
+  setup(options, nuxt) {
+    nuxt.hook('builder:watch', (event, path) => {
+      console.log(`${event}: ${path}`);
+    });
+  }
 })
 ```
 
-```ts
-// modules/file-logger.ts
-import { defineNuxtModule } from '@nuxt/kit';
-
-export default defineNuxtModule(() => {
-  if (process.dev) {
-    return {
-      hooks: {
-        'file:changed'({ filePath }) {
-          console.log(`File changed: ${filePath}`);
-        },
-      },
-    };
-  }
-});
-```
-
 ## 2. Simple DAG Result (task -> search -> answer)
-> **Keywords used:** dev, module, hook, server, files
+> **Keywords used:** module, hooks, server, dev, file
 
-> **Found Context:** --- Search hits for: 'dev' --- Nuxt 5 is **currently in development**. Until the release, it is possible to test many of Nuxt 5's breaking changes from Nuxt version 4.2+.  ### Opting in to Nuxt 5  First, upgrade Nuxt to the [latest release](https://github.com/nuxt/nuxt/releases).  Then you can set your `future.compatibilityVersion` to match Nuxt 5 behavior:  ```ts [nuxt.config.ts]twoslash export default defineNuxtConfig({   future: {     compatibilityVersion: 5,   }, }) ```  When you set your `f...
+> **Found Context:** --- Search hits for: 'module' --- This affects both build-time Nuxt hooks (used by Nuxt modules) and runtime Nuxt hooks (which you might use in your application code).  </tip>  #### Reasons for Change  Hookable v6's `callHook` is 20-40x faster because it avoids creating a `Promise` when one is not needed. This benefits applications with many hook call sites.  #### Migration Steps  If you or your modules use `callHook` with `.then()` or `.catch()` chaining, switch to `await`:  ```diff - nuxtApp.c...
 
 **LLM output:**
 
-```ts
-// nuxt.config.ts
-export default defineNuxtConfig({
-  hooks: {
-    'vite:beforeUpdate': (ctx) => {
-      ctx.updates.forEach(update => {
-        console.log(`File changed: ${update.path}`)
-      })
-    },
+```js
+import { defineNuxtModule } from '@nuxt/kit'
+
+export default defineNuxtModule({
+  setup (options, nuxt) {
+    nuxt.hook('watcher:change', (event, path) => {
+      console.log(`File changed: ${path}`)
+    })
   },
 })
 ```
@@ -60,13 +43,11 @@ export default defineNuxtConfig({
 ## 3. Prefect Result (task & docs -> answer)
 **LLM output:**
 
-```ts
-import { defineNuxtModule } from 'nuxt/kit'
-
+```js
 export default defineNuxtModule({
-  setup() {
+  setup(options, nuxt) {
     nuxt.hook('builder:watch', async (event, path) => {
-      console.log(`${event}: ${path}`)
+      console.log(`File changed: ${path}`)
     })
   }
 })
@@ -75,6 +56,6 @@ export default defineNuxtModule({
 ## 4. Token Usage Comparison
 | Condition | Input Tokens | Output Tokens | Total |
 | :--- | :--- | :--- | :--- |
-| Baseline | 61 | 133 | 194 |
-| Simple DAG | 555 | 85 | 640 |
-| Perfect Info | 236 | 68 | 304 |
+| Baseline | 63 | 58 | 121 |
+| Simple DAG | 16689 | 84 | 16773 |
+| Perfect Info | 238 | 60 | 298 |

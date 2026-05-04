@@ -1,6 +1,6 @@
 # Task 6
 
-**Context Prompt:** You are a Nuxt 4 developer. Respond with a simple answer, using as view lines of code as possible. Only use the official, stable, and public API. No comments, unless absolutely necessary.
+**Context Prompt:** You are a Nuxt 4 developer. Respond with a simple answer, using as few lines of code as possible. Only use the official, stable, public API. No comments and no imports, unless absolutely necessary.
 
 **Task Prompt:** write a composable that caches fetched data but always retrieves fresh data on manual refresh
 
@@ -12,112 +12,90 @@ Link to Guide: https://nuxt.com/docs/4.x/getting-started/upgrade#singleton-data-
 **LLM output:**
 
 ```js
-import { ref, watch, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue'
 
-export function useCachedFetch(fetchFn, options = {}) {
-  const data = ref(null);
-  const error = ref(null);
-  const loading = ref(false);
+export function useCachedFetch(url) {
+  const data = ref(null)
+  const loading = ref(false)
+  const error = ref(null)
+  let controller = null
 
   const fetchData = async (forceRefresh = false) => {
     if (data.value && !forceRefresh) {
-      return;
+      return
     }
-    loading.value = true;
-    error.value = null;
+    loading.value = true
+    error.value = null
+    if (controller) {
+      controller.abort()
+    }
+    controller = new AbortController()
     try {
-      data.value = await fetchFn();
+      const response = await fetch(url, { signal: controller.signal })
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      data.value = await response.json()
     } catch (err) {
-      error.value = err;
+      if (err.name !== 'AbortError') {
+        error.value = err
+      }
     } finally {
-      loading.value = false;
+      loading.value = false
     }
-  };
+  }
 
-  fetchData();
+  onMounted(() => {
+    fetchData()
+  })
 
   onUnmounted(() => {
-    // Optional: Cleanup logic if needed
-  });
+    if (controller) {
+      controller.abort()
+    }
+  })
 
-  return {
-    data,
-    error,
-    loading,
-    refresh: () => fetchData(true),
-  };
+  const refresh = () => fetchData(true)
+
+  return { data, loading, error, refresh }
 }
 ```
 
 ## 2. Simple DAG Result (task -> search -> answer)
-> **Keywords used:** composable, caching, fetch, refresh, data
+> **Keywords used:** composable, cache, fetch, refresh, override
 
 > **Found Context:** --- Search hits for: 'composable' --- composables/   layouts/   middleware/   pages/   plugins/   utils/   app.config.ts   app.vue   router.options.ts content/ layers/ modules/ node_modules/ public/ shared/   types/   utils/ server/   api/   middleware/   plugins/   routes/   utils/ nuxt.config.ts ```  <note>  With this new structure, the `~` alias now points to the `app/` directory by default (your `srcDir`). This means `~/components` resolves to `app/components/`, `~/pages` to `app/pages/`, et...
 
 **LLM output:**
 
 ```ts
-// composables/useCachedFetch.ts
-import { ref, readonly } from 'vue'
-import { $fetch } from 'ofetch'
-
-export function useCachedFetch<T>(url: string, options: Parameters<typeof $fetch>[1] = {}) {
-  const data = ref<T | null>(null)
-  const loading = ref(false)
-  const error = ref<any>(null)
-
-  const fetchData = async () => {
-    loading.value = true
-    error.value = null
-    try {
-      data.value = await $fetch<T>(url, options)
-    } catch (err) {
-      error.value = err
-    } finally {
-      loading.value = false
-    }
-  }
-
-  const refresh = () => {
-    fetchData()
-  }
-
-  // Fetch on initial load if not disabled
-  if (options.immediate !== false) {
-    fetchData()
-  }
-
-  return {
-    data: readonly(data),
-    loading: readonly(loading),
-    error: readonly(error),
-    refresh,
-  }
+export function useCachedFetch<T>(key: string, fn: () => Promise<T>) {
+  return useAsyncData(key, fn, {
+    getCachedData: (key, nuxtApp, ctx) => {
+      if (ctx.cause === 'refresh:manual') {
+        return undefined
+      }
+      return nuxtApp.payload.data[key]
+    },
+  })
 }
 ```
 
 ## 3. Prefect Result (task & docs -> answer)
 **LLM output:**
 
-```ts
-export function useFetchWithManualRefresh<T>(
-  key: string,
-  fetchFn: () => Promise<T>,
-  options: { server?: boolean; lazy?: boolean } = {}
-) {
-  const cachedData: Record<string, T> = {}
+```javascript
+export const useMyComposable = (key, fetchFn) => {
+  const cachedData = {}
 
-  return useAsyncData<T>(key, fetchFn, {
+  return useAsyncData(key, fetchFn, {
     getCachedData: (key, nuxtApp, ctx) => {
-      if (ctx.cause === 'refresh:manual') {
-        return undefined
-      }
+      if (ctx.cause === 'refresh:manual') return undefined
       return cachedData[key]
     },
-    onFetchError: ({ data }) => {
-      throw data
-    },
-    ...options,
+    onResponse({ data }) {
+      cachedData[key] = data.value
+    }
   })
 }
 ```
@@ -125,6 +103,6 @@ export function useFetchWithManualRefresh<T>(
 ## 4. Token Usage Comparison
 | Condition | Input Tokens | Output Tokens | Total |
 | :--- | :--- | :--- | :--- |
-| Baseline | 62 | 215 | 277 |
-| Simple DAG | 589 | 262 | 851 |
-| Perfect Info | 280 | 156 | 436 |
+| Baseline | 64 | 311 | 375 |
+| Simple DAG | 16461 | 106 | 16567 |
+| Perfect Info | 282 | 109 | 391 |

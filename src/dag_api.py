@@ -44,6 +44,6 @@ def run_search(keywords):
     final_context = "\n\n".join(combined_results)
 
     # hard limit on the context size
-    # if rg grabs 5 keywords * 4 matches * 50 lines = max of 1000 lines + 100 lines buffer
+    # if rg grabs 5 keywords * 4 matches * 50 lines * 60 chars each = 60.000 lines
     # so the prompt does not get too long for the llm
-    return final_context[:1100]
+    return final_context[:60_000]
