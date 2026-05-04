@@ -20,7 +20,7 @@ no_tools_config = types.GenerateContentConfig(
 )
 
 # context (prompt injected before every task prompt)
-context_prompt = "You are a Nuxt 4 developer. Respond with a simple answer, using as view lines of code as possible. Only use the official, stable, and public API. No comments, unless absolutely necessary."
+context_prompt = "You are a Nuxt 4 developer. Respond with a simple answer, using as view lines of code as possible. Only use the official, stable, and public API. No comments and imports, unless absolutely necessary."
 
 # parse task selection from CLI args
 # usage: python experiment.py          -> all tasks
@@ -48,8 +48,6 @@ os.makedirs("src/results", exist_ok=True)
 
 print(f"\n--- Starting 3-condition Experiment ({len(selected_cases)} tasks)... ---\n")
 
-written_files = []
-
 for i, case in enumerate(selected_cases, 1):
     print(f"Processing Task {case['id']} ({i}/{len(selected_cases)})")
 
@@ -60,7 +58,6 @@ for i, case in enumerate(selected_cases, 1):
         f.write(f"**Task Prompt:** {case['task']}\n\n")
         f.write(f"Link to Guide: {case['link']}\n\n")
         f.write("---\n\n")
-        f.flush()
 
         # 1. baseline (no docs, no search)
         print("-> (1/3) Running Baseline Prompt...")
@@ -68,7 +65,6 @@ for i, case in enumerate(selected_cases, 1):
         f.write("## 1. Baseline Result (task -> answer)\n")
         f.write("**LLM output:**\n\n")
         f.write(baseline_response.text + "\n\n")
-        f.flush()
 
         # 2. simple dag (task + dag_api: 1. search, 2. answer)
         print("-> (2/3) Running Simple DAG Prompt...")
@@ -78,7 +74,6 @@ for i, case in enumerate(selected_cases, 1):
         f.write(f"> **Found Context:** {grep_context[:500].replace(chr(10), ' ')}...\n\n")
         f.write("**LLM output:**\n\n")
         f.write(dag_response.text + "\n\n")
-        f.flush()
 
         # 3. perfect information (task + docs provided)
         print("-> (3/3) Running Perfect Information Prompt...")
@@ -86,7 +81,6 @@ for i, case in enumerate(selected_cases, 1):
         f.write("## 3. Prefect Result (task & docs -> answer)\n")
         f.write("**LLM output:**\n\n")
         f.write(perfect_response.text + "\n\n")
-        f.flush()
 
         f.write("## 4. Token Usage Comparison\n")
         f.write("| Condition | Input Tokens | Output Tokens | Total |\n")
@@ -94,7 +88,7 @@ for i, case in enumerate(selected_cases, 1):
         f.write(f"| Baseline | {baseline_total_input} | {baseline_total_output} | {baseline_total_input + baseline_total_output} |\n")
         f.write(f"| Simple DAG | {dage_total_input} | {dag_total_output} | {dage_total_input + dag_total_output} |\n")
         f.write(f"| Perfect Info | {perfect_total_input} | {perfect_total_output} | {perfect_total_input + perfect_total_output} |\n")
+        f.flush()
 
-    written_files.append(result_path)
 
-print(f"\nDone! Written {len(written_files)} file(s) to src/results")
+print(f"\nDone! Written {len(selected_cases)} file(s) to {os.path.abspath('src/results')}/")

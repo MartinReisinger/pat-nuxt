@@ -1,6 +1,6 @@
 # Task 1
 
-**Context Prompt:** You are a Nuxt 4 developer. Respond with a simple answer, using as view lines of code as possible. Only use the official, stable, and public API. No comments, unless absolutely necessary.
+**Context Prompt:** You are a Nuxt 4 developer. Respond with a simple answer, using as view lines of code as possible. Only use the official, stable, and public API. No comments and imports, unless absolutely necessary.
 
 **Task Prompt:** list the project file structure for a nuxt app (like tree) with one index page, a footer and header component as well as google auth middleware
 
@@ -14,34 +14,35 @@ Link to Guide: https://nuxt.com/docs/4.x/getting-started/upgrade#new-directory-s
 ```
 .
 ├── app.vue
-├── components/
-│   ├── Footer.vue
-│   └── Header.vue
-├── middleware/
-│   └── google-auth.global.ts
-├── pages/
-│   └── index.vue
-└── nuxt.config.ts
-```
-
-## 2. Simple DAG Result (task -> search -> answer)
-> **Keywords used:** Nuxt, directory, structure, file, layout
-
-> **Found Context:** --- Search hits for: 'Nuxt' --- > Learn how to upgrade to the latest Nuxt version.  ## Upgrading Nuxt  ### Latest release  To upgrade Nuxt to the [latest release](https://github.com/nuxt/nuxt/releases), use the `nuxt upgrade` command.  <code-group sync="pm">  ```bash [npm] npx nuxt upgrade ```  ```bash [yarn] yarn nuxt upgrade ```  ```bash [pnpm] pnpm nuxt upgrade ```  ```bash [bun] bun x nuxt upgrade ```  ```bash [deno] deno x nuxt upgrade ```  </code-group>  ### Nightly Release Channel  To use...
-
-**LLM output:**
-
-```
-.
-├── app.vue
 ├── components
-│   ├── Footer.vue
-│   └── Header.vue
+│   ├── AppHeader.vue
+│   └── AppFooter.vue
 ├── middleware
 │   └── google-auth.global.ts
 ├── pages
 │   └── index.vue
 └── nuxt.config.ts
+```
+
+## 2. Simple DAG Result (task -> search -> answer)
+> **Keywords used:** Nuxt.js directory, structure, files, pages, components
+
+> **Found Context:** --- Search hits for: 'structure' --- ### New Directory Structure  🚦 **Impact Level**: Significant  Nuxt now defaults to a new directory structure, with backwards compatibility (so if Nuxt detects you are using the old structure, such as with a top-level `app/pages/` directory, this new structure will not apply).  👉 [See full RFC](https://github.com/nuxt/nuxt/issues/26444)  #### What Changed  - the new Nuxt default `srcDir` is `app/` by default, and most things are resolved from there. - `serverD...
+
+**LLM output:**
+
+```
+.
+├── app/
+│   ├── components/
+│   │   ├── Header.vue
+│   │   └── Footer.vue
+│   ├── middleware/
+│   │   └── googleAuth.ts
+│   └── pages/
+│       └── index.vue
+├── nuxt.config.ts
+└── package.json
 ```
 
 ## 3. Prefect Result (task & docs -> answer)
@@ -51,8 +52,8 @@ Link to Guide: https://nuxt.com/docs/4.x/getting-started/upgrade#new-directory-s
 .
 ├── app/
 │   ├── components/
-│   │   ├── Header.vue
-│   │   └── Footer.vue
+│   │   ├── Footer.vue
+│   │   └── Header.vue
 │   ├── layouts/
 │   │   └── default.vue
 │   ├── middleware/
@@ -67,6 +68,6 @@ Link to Guide: https://nuxt.com/docs/4.x/getting-started/upgrade#new-directory-s
 ## 4. Token Usage Comparison
 | Condition | Input Tokens | Output Tokens | Total |
 | :--- | :--- | :--- | :--- |
-| Baseline | 76 | 62 | 138 |
-| Simple DAG | 622 | 75 | 697 |
-| Perfect Info | 971 | 100 | 1071 |
+| Baseline | 78 | 61 | 139 |
+| Simple DAG | 601 | 90 | 691 |
+| Perfect Info | 973 | 100 | 1073 |
