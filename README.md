@@ -8,30 +8,35 @@
 
 ## Setup
 
-1. making a python virtual environment (to avoid version conflicts)
+1. Making a python virtual environment (to avoid version conflicts)
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-2. installing necessary imports
+2. Installing necessary imports
 
 ```bash
 pip install google-genai
 pip install python-dotenv
 ```
 
-3. set your free GEMINI_API_KEY in the .env file
+3. Set your free GEMINI_API_KEY in the .env file
     - go to https://aistudio.google.com/app/api-keys
     - create a project & api key
     - paste it in the [.env.example](.env.example) and remove the '.example'
 
-4. run the experiment.py
+4. Run the experiment.py
 
 ```bash
-python3 src/experiment.py
+python3 src/experiment.py          # run all tasks
+python3 src/experiment.py 1 3 5    # run specific tasks
+python3 src/experiment.py 1-5      # run a range
+python3 src/experiment.py 1-3 7    # mixed
 ```
+
+Results are written to [results](src/results). Only the selected tasks are overwritten.
 
 ## Credits & Attribution
 
