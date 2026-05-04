@@ -13,12 +13,12 @@ Link to Guide: https://nuxt.com/docs/4.x/getting-started/upgrade#normalized-comp
 
 ```vue
 <template>
-  <NuxtPage :keepalive="{ include: ['users-id'] }" />
+  <NuxtPage :keep-alive="{ include: ['users-id'] }" />
 </template>
 ```
 
 ## 2. Simple DAG Result (task -> search -> answer)
-> **Keywords used:** KeepAlive, page, component, cache, navigation
+> **Keywords used:** KeepAlive, page, cache, component, navigation
 
 > **Found Context:** --- Search hits for: 'KeepAlive' --- - **Normalized Page Names**: Page component names will [match their route names](/dag_content/4.x/getting-started/upgrade#normalized-page-component-names) for consistent `<KeepAlive>` behavior - **clearNuxtState resets to defaults**: `clearNuxtState` will [reset state to its initial value](/dag_content/4.x/getting-started/upgrade#respect-defaults-when-clearing-usestate) instead of setting it to `undefined` - **Non-async callHook**: [`callHook` may return `voi...
 
@@ -26,9 +26,7 @@ Link to Guide: https://nuxt.com/docs/4.x/getting-started/upgrade#normalized-comp
 
 ```vue
 <template>
-  <NuxtLayout>
-    <NuxtPage :keepalive="{ include: ['users-id'] }" />
-  </NuxtLayout>
+  <NuxtPage :keepalive="{ include: 'user-id' }" />
 </template>
 ```
 
@@ -44,6 +42,6 @@ Link to Guide: https://nuxt.com/docs/4.x/getting-started/upgrade#normalized-comp
 ## 4. Token Usage Comparison
 | Condition | Input Tokens | Output Tokens | Total |
 | :--- | :--- | :--- | :--- |
-| Baseline | 73 | 31 | 104 |
-| Simple DAG | 567 | 55 | 622 |
+| Baseline | 73 | 32 | 105 |
+| Simple DAG | 567 | 41 | 608 |
 | Perfect Info | 414 | 29 | 443 |

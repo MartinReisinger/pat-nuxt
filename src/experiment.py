@@ -1,4 +1,4 @@
-import json
+import glob
 import os
 import sys
 
@@ -37,9 +37,18 @@ def parse_task_ids(args):
             ids.add(int(token))
     return ids
 
-# loading the test cases
-with open("src/experiment.json", "r") as f:
-    test_cases = json.load(f)
+# loading the test cases from src/tests/task*.md
+def parse_case(path):
+    with open(path) as f:
+        content = f.read()
+    _, frontmatter, doc = content.split('---\n', 2)
+    meta = {}
+    for line in frontmatter.strip().splitlines():
+        key, _, value = line.partition(': ')
+        meta[key.strip()] = value.strip()
+    return {'id': int(meta['id']), 'task': meta['task'], 'link': meta['link'], 'doc': doc.strip()}
+
+test_cases = [parse_case(f) for f in sorted(glob.glob('src/tests/task*.md'))]
 
 selected_ids = parse_task_ids(sys.argv[1:]) if sys.argv[1:] else {c['id'] for c in test_cases}
 selected_cases = [c for c in test_cases if c['id'] in selected_ids]
@@ -48,47 +57,62 @@ os.makedirs("src/results", exist_ok=True)
 
 print(f"\n--- Starting 3-condition Experiment ({len(selected_cases)} tasks)... ---\n")
 
-for i, case in enumerate(selected_cases, 1):
-    print(f"Processing Task {case['id']} ({i}/{len(selected_cases)})")
+i, case, current_result_path = 0, None, None
+try:
+    for i, case in enumerate(selected_cases, 1):
+        print(f"Processing Task {case['id']} ({i}/{len(selected_cases)})")
 
-    result_path = f"src/results/task{case['id']:02d}.md"
-    with open(result_path, "w") as f:
-        f.write(f"# Task {case['id']}\n\n")
-        f.write(f"**Context Prompt:** {context_prompt}\n\n")
-        f.write(f"**Task Prompt:** {case['task']}\n\n")
-        f.write(f"Link to Guide: {case['link']}\n\n")
-        f.write("---\n\n")
+        current_result_path = f"src/results/task{case['id']:02d}.md"
+        with open(current_result_path, "w") as f:
+            f.write(f"# Task {case['id']}\n\n")
+            f.write(f"**Context Prompt:** {context_prompt}\n\n")
+            f.write(f"**Task Prompt:** {case['task']}\n\n")
+            f.write(f"Link to Guide: {case['link']}\n\n")
+            f.write("---\n\n")
 
-        # 1. baseline (no docs, no search)
-        print("-> (1/3) Running Baseline Prompt...")
-        baseline_response, baseline_total_input, baseline_total_output = basline_prompt.run(client, model_id, no_tools_config, context_prompt, case['task'])
-        f.write("## 1. Baseline Result (task -> answer)\n")
-        f.write("**LLM output:**\n\n")
-        f.write(baseline_response.text + "\n\n")
+            # 1. baseline (no docs, no search)
+            print("-> (1/3) Running Baseline Prompt...")
+            baseline_response, baseline_total_input, baseline_total_output = basline_prompt.run(client, model_id, no_tools_config, context_prompt, case['task'])
+            f.write("## 1. Baseline Result (task -> answer)\n")
+            f.write("**LLM output:**\n\n")
+            f.write(baseline_response.text + "\n\n")
 
-        # 2. simple dag (task + dag_api: 1. search, 2. answer)
-        print("-> (2/3) Running Simple DAG Prompt...")
-        dag_response, keywords, grep_context, dage_total_input, dag_total_output = dag_prompt.run(client, model_id, no_tools_config, context_prompt, case['task'])
-        f.write("## 2. Simple DAG Result (task -> search -> answer)\n")
-        f.write(f"> **Keywords used:** {', '.join(keywords)}\n\n")
-        f.write(f"> **Found Context:** {grep_context[:500].replace(chr(10), ' ')}...\n\n")
-        f.write("**LLM output:**\n\n")
-        f.write(dag_response.text + "\n\n")
+            # 2. simple dag (task + dag_api: 1. search, 2. answer)
+            print("-> (2/3) Running Simple DAG Prompt...")
+            dag_response, keywords, grep_context, dage_total_input, dag_total_output = dag_prompt.run(client, model_id, no_tools_config, context_prompt, case['task'])
+            f.write("## 2. Simple DAG Result (task -> search -> answer)\n")
+            f.write(f"> **Keywords used:** {', '.join(keywords)}\n\n")
+            f.write(f"> **Found Context:** {grep_context[:500].replace(chr(10), ' ')}...\n\n")
+            f.write("**LLM output:**\n\n")
+            f.write(dag_response.text + "\n\n")
 
-        # 3. perfect information (task + docs provided)
-        print("-> (3/3) Running Perfect Information Prompt...")
-        perfect_response, perfect_total_input, perfect_total_output = perfect_prompt.run(client, model_id, no_tools_config, context_prompt, case['task'], case['doc'])
-        f.write("## 3. Prefect Result (task & docs -> answer)\n")
-        f.write("**LLM output:**\n\n")
-        f.write(perfect_response.text + "\n\n")
+            # 3. perfect information (task + docs provided)
+            print("-> (3/3) Running Perfect Information Prompt...")
+            perfect_response, perfect_total_input, perfect_total_output = perfect_prompt.run(client, model_id, no_tools_config, context_prompt, case['task'], case['doc'])
+            f.write("## 3. Prefect Result (task & docs -> answer)\n")
+            f.write("**LLM output:**\n\n")
+            f.write(perfect_response.text + "\n\n")
 
-        f.write("## 4. Token Usage Comparison\n")
-        f.write("| Condition | Input Tokens | Output Tokens | Total |\n")
-        f.write("| :--- | :--- | :--- | :--- |\n")
-        f.write(f"| Baseline | {baseline_total_input} | {baseline_total_output} | {baseline_total_input + baseline_total_output} |\n")
-        f.write(f"| Simple DAG | {dage_total_input} | {dag_total_output} | {dage_total_input + dag_total_output} |\n")
-        f.write(f"| Perfect Info | {perfect_total_input} | {perfect_total_output} | {perfect_total_input + perfect_total_output} |\n")
-        f.flush()
+            f.write("## 4. Token Usage Comparison\n")
+            f.write("| Condition | Input Tokens | Output Tokens | Total |\n")
+            f.write("| :--- | :--- | :--- | :--- |\n")
+            f.write(f"| Baseline | {baseline_total_input} | {baseline_total_output} | {baseline_total_input + baseline_total_output} |\n")
+            f.write(f"| Simple DAG | {dage_total_input} | {dag_total_output} | {dage_total_input + dag_total_output} |\n")
+            f.write(f"| Perfect Info | {perfect_total_input} | {perfect_total_output} | {perfect_total_input + perfect_total_output} |\n")
+            f.flush()  # only flush once all three conditions are complete
 
+        current_result_path = None  # mark as fully saved
+
+except KeyboardInterrupt:
+    if current_result_path and os.path.exists(current_result_path):
+        os.remove(current_result_path)
+        print(f"\n\nInterrupted during Task {case['id']} — incomplete result discarded.")
+    elif case:
+        print(f"\n\nInterrupted after Task {case['id']}.")
+    else:
+        print("\n\nInterrupted before any task ran.")
+    if case:
+        print(f"Resume with: python3 src/experiment.py {case['id']}-{selected_cases[-1]['id']}")
+    sys.exit(0)
 
 print(f"\nDone! Written {len(selected_cases)} file(s) to {os.path.abspath('src/results')}/")

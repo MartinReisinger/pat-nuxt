@@ -2,33 +2,30 @@
 
 ## File Logic
 
-### experiment/
+### [src](src)
 
-- **[experiment.py](src/experiment.py)**: Main entrypoint. Runs all three conditions for each task in `experiment.json` and logs output to
-  `results.md`.
+- **[experiment.py](src/experiment.py)**: Main entrypoint. Reads task cases from `src/tests/task*.md`, runs all three conditions for each, and writes results to `src/results/task**.md`.
 - **[dag_api.py](src/dag_api.py)**: Search engine using `ripgrep` to query `dag_content/` and return search results.
-- **[experiment.py](src/experiment.py)**: Dataset containing the `task` prompts and the ground-truth `doc` snippets.
 
-### experiment/prompt/
+### [src/tests](src/tests)
 
-- **[basline_prompt.py](src/condition/basline_prompt.py)**: Implementation of Condition 1.
-  1. just the task, no further docs or instructions
-- **[dag_prompt.py](src/condition/dag_prompt.py)**: Implementation of Condition 2.
-  1. prompt with search instruction
-  2. call [dag_api.py](src/dag_api.py)
-  3. re-prompt with the search results
-- **[perfect_prompt.py](src/condition/perfect_prompt.py)**: Implementation of Condition 3.
-  1. the task and the correct documentation of the relevant api change
+- **task01.md … task25.md**: One file per test case. Each file contains YAML frontmatter (`id`, `link`, `task`) and a markdown body with the relevant Nuxt 4 documentation snippet (`doc`).
+
+### [src/condition](src/condition)
+
+- **[basline_prompt.py](src/condition/basline_prompt.py)**: Condition 1 — task only, no docs or search.
+- **[dag_prompt.py](src/condition/dag_prompt.py)**: Condition 2 — prompt for keywords → search via `dag_api.py` → re-prompt with results.
+- **[perfect_prompt.py](src/condition/perfect_prompt.py)**: Condition 3 — task plus the correct documentation snippet injected directly.
 
 ## Output
 
-### [results.md](src/results.md)
+### [src/results](src/results)
 
-The final "report" containing:
+One file per task (`task01.md` … `task25.md`), each containing:
 
-- LLM responses for each condition to compare accuracy.
+- LLM responses for all three conditions.
 - Keywords and documentation hits used in the DAG process.
-- Token usage tables for cost and efficiency analysis.
+- Token usage table for cost and efficiency analysis.
 
 ---
 

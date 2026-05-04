@@ -42,6 +42,6 @@ Results are written to [results](src/results). Only the selected tasks are overw
 
 This project utilizes documentation from [Nuxt.js](https://github.com/nuxt/nuxt), licensed under the **MIT License**.
 
-* **Data Path:** `dag_content/docs/`
+* **Data Path:** `dag_content/`
 * **Original Source:** [Nuxt GitHub Docs](https://github.com/nuxt/nuxt/tree/main/docs)
 * **Copyright:** (c) Nuxt.js Contributors
