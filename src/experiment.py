@@ -20,7 +20,7 @@ no_tools_config = types.GenerateContentConfig(
 )
 
 # context (prompt injected before every task prompt)
-context_prompt = "You are a Nuxt 4 developer. Respond with a simple answer, using as view lines of code as possible. Only use the official, stable, and public API. No comments and imports, unless absolutely necessary."
+context_prompt = "You are a Nuxt 4 developer. Respond with a simple answer, using as few lines of code as possible. Only use the official, stable, public API. No comments and no imports, unless absolutely necessary."
 
 # parse task selection from CLI args
 # usage: python experiment.py          -> all tasks

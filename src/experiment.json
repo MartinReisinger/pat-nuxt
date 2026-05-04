@@ -13,7 +13,7 @@
   },
   {
     "id": 3,
-    "task": "set up KeepAlive on NuxtPage so a component inside a subfolder stays mounted between navigations",
+    "task": "set up KeepAlive on NuxtPage so a 'user-id' component inside a subfolder stays mounted between navigations",
     "link": "https://nuxt.com/docs/4.x/getting-started/upgrade#normalized-component-names",
     "doc": "### Normalized Component Names\n\n🚦 **Impact Level**: Moderate\n\nVue will now generate component names that match the Nuxt pattern for component naming.\n\n#### What Changed\n\nBy default, if you haven't set it manually, Vue will assign a component name that matches the filename of the component.\n\n```bash [Directory structure]\n├─ components/\n├─── SomeFolder/\n├───── MyComponent.vue\n```\n\nIn this case, the component name would be `MyComponent`, as far as Vue is concerned. If you wanted to use `<KeepAlive>` with it, or identify it in the Vue DevTools, you would need to use this name.\n\nBut in order to auto-import it, you would need to use `SomeFolderMyComponent`.\n\nWith this change, these two values will match, and Vue will generate a component name that matches the Nuxt pattern for component naming.\n\n#### Migration Steps\n\nEnsure that you use the updated name in any tests which use `findComponent` from `@vue/test-utils` and in any `<KeepAlive>` which depends on the name of your component.\n\n```diff\n- <NuxtPage :keepalive=\"{ include: ['MyComponent'] }\" />\n+ <NuxtPage :keepalive=\"{ include: ['SomeFolderMyComponent'] }\" />\n```\n\nAlternatively, for now, you can disable this behaviour with:\n\n```ts [nuxt.config.ts]\nexport default defineNuxtConfig({\n  experimental: {\n    normalizeComponentNames: false,\n  },\n})\n```\n"
   },
