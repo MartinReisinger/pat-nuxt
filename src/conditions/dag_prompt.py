@@ -1,4 +1,4 @@
-import dag_api  # the ripgrep dag
+from src import dag_api # the ripgrep dag
 
 
 def run(client, model_id, config, context_prompt, task):

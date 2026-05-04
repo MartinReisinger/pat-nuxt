@@ -11,11 +11,11 @@
 
 - **task01.md … task25.md**: One file per test case. Each file contains YAML frontmatter (`id`, `link`, `task`) and a markdown body with the relevant Nuxt 4 documentation snippet (`doc`).
 
-### [src/condition](src/condition)
+### [src/condition](src/conditions)
 
-- **[basline_prompt.py](src/condition/basline_prompt.py)**: Condition 1 — task only, no docs or search.
-- **[dag_prompt.py](src/condition/dag_prompt.py)**: Condition 2 — prompt for keywords → search via `dag_api.py` → re-prompt with results.
-- **[perfect_prompt.py](src/condition/perfect_prompt.py)**: Condition 3 — task plus the correct documentation snippet injected directly.
+- **[basline_prompt.py](src/conditions/basline_prompt.py)**: Condition 1 — task only, no docs or search.
+- **[dag_prompt.py](src/conditions/dag_prompt.py)**: Condition 2 — prompt for keywords → search via `dag_api.py` → re-prompt with results.
+- **[perfect_prompt.py](src/conditions/perfect_prompt.py)**: Condition 3 — task plus the correct documentation snippet injected directly.
 
 ## Output
 
