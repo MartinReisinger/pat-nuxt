@@ -9,3 +9,6 @@
 
 # macOS indexing file
 .DS_Store
+
+# notes
+NOTES.md

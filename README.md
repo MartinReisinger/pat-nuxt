@@ -2,9 +2,9 @@
 
 ## Conditions
 
-1. Baseline. The LLM relies only on its internal training data.
-2. Simple DAG. Search the docs via a dag for keywords, then answer with the search results in context.
-3. Perfect Information. The LLM is already provided with the correct documentation in the user prompt.
+1. **Baseline:** The LLM relies only on its internal training data.
+2. **Simple DAG:** Search the docs via a dag for keywords, then answer with the search results in context.
+3. **Perfect Information:** The LLM is already provided with the correct documentation in the user prompt.
 
 ## Setup
 
