@@ -1,0 +1,76 @@
+task,condition,correct,note
+1,Baseline,0,Uses flat Nuxt 3 root structure — no app/ folder
+1,Simple DAG,1,Correctly places pages/components/middleware inside app/
+1,Perfect Info,1,Correctly places pages/components/middleware inside app/
+2,Baseline,0,Reads window.__NUXT__ directly — removed in Nuxt 4
+2,Simple DAG,1,Uses useNuxtApp().payload correctly
+2,Perfect Info,1,Uses useNuxtApp().payload correctly
+3,Baseline,0,Uses kebab-case 'users-id' — wrong naming format for KeepAlive include
+3,Simple DAG,0,Uses '_userId' with underscore — wrong naming format
+3,Perfect Info,1,Uses PascalCase 'UserId' matching Nuxt 4 normalized component names
+4,Baseline,0,Uses pages:extend hook (Nuxt 3) instead of pages:resolved
+4,Simple DAG,0,Uses pages:extend and pushes a new page object — completely wrong approach
+4,Perfect Info,1,Uses pages:resolved hook with correct meta.layout assignment
+5,Baseline,0,Uses typescript.strict.noImplicitArrayAccess — key does not exist
+5,Simple DAG,0,Uses typescript.strict['array-type'] — key does not exist
+5,Perfect Info,1,Uses typescript.tsConfig.compilerOptions.noUncheckedIndexedAccess: false correctly
+6,Baseline,0,Implements caching with raw fetch and manual AbortController — ignores useAsyncData
+6,Simple DAG,1,Uses getCachedData with ctx.cause === 'refresh:manual' correctly
+6,Perfect Info,1,Uses getCachedData with ctx.cause === 'refresh:manual' correctly
+7,Baseline,0,Uses raw fetch + watch pattern — does not use useAsyncData with reactive key
+7,Simple DAG,1,Uses getter function () => `user-profile-${userId.value}` as key — correct reactive key pattern
+7,Perfect Info,1,Same reactive getter key pattern as DAG — correct
+8,Baseline,1,Uses route.name directly — correct (route.meta.name was removed)
+8,Simple DAG,1,Uses route.name directly — correct
+8,Perfect Info,1,Uses route.name directly — correct
+9,Baseline,0,Places <meta> tag directly in template; title-only useHead — anti-pattern
+9,Simple DAG,1,useHead with meta array — no vmid or hid props used
+9,Perfect Info,1,useHead with meta array — no vmid or hid props used
+10,Baseline,0,Uses routeRules — different mechanism; does not configure prerender routes
+10,Simple DAG,1,Uses nitro.prerender with routes and ignore — correct
+10,Perfect Info,1,Uses nitro.prerender with routes and ignore — correct
+11,Baseline,0,Uses raw fetch with manual loading ref — does not use useAsyncData or status
+11,Simple DAG,0,Uses $fetch with manual loading ref — same problem as baseline
+11,Perfect Info,1,Uses useAsyncData with immediate: false and checks status === 'pending' — correct
+12,Baseline,0,Uses execute(false) to cancel — fabricated API
+12,Simple DAG,1,Uses refresh({ dedupe: 'cancel' }) — correct
+12,Perfect Info,1,Uses refresh({ dedupe: 'cancel' }) — correct
+13,Baseline,0,v-else renders empty list when data is undefined — no guard for undefined default
+13,Simple DAG,1,Checks posts && posts.length — handles undefined default correctly
+13,Perfect Info,1,"Checks v-else-if=""data"" — handles undefined default correctly"
+14,Baseline,0,Uses raw fetch in onMounted — no useFetch or deep: true
+14,Simple DAG,0,Uses useFetch but no deep: true — in-place mutations on shallow ref won't trigger reactivity
+14,Perfect Info,1,Uses useFetch with { deep: true } — correct opt-in for nested reactivity
+15,Baseline,1,Uses builder:watch hook correctly — logs path (absolute in Nuxt 4)
+15,Simple DAG,0,Uses watcher:change — wrong hook name; does not exist
+15,Perfect Info,1,Uses builder:watch hook correctly
+16,Baseline,0,Uses experimental.inlineCSS — config key does not exist
+16,Simple DAG,1,Uses features.inlineStyles: true — correct
+16,Perfect Info,1,Uses features.inlineStyles: true — correct
+17,Baseline,0,useFetch auto-keys by URL (safe) but accesses post.title without null guard — crashes on undefined
+17,Simple DAG,1,useFetch with URL slug (auto-key is safe) and null guard in template
+17,Perfect Info,1,useAsyncData with explicit slug-based key — correct per docs recommendation
+18,Baseline,1,Reads error.data directly — no JSON.parse
+18,Simple DAG,1,Reads error.data directly — no JSON.parse
+18,Perfect Info,1,Reads error.data directly — no JSON.parse
+19,Baseline,0,Sets attribute on app.head.htmlAttrs — wrong API; not the spa loader element
+19,Simple DAG,0,Uses spaLoadingTemplate.customAttributes — does not exist
+19,Perfect Info,1,Uses app.spaLoaderAttrs — correct Nuxt 4 API
+20,Baseline,1,Wraps build hook registration inside modules:done — correct
+20,Simple DAG,0,Calls nuxt.ready() which does not exist before registering modules:done
+20,Perfect Info,1,Uses modules:done to register build hook — correct
+21,Baseline,0,Raw watch + manual fetch — does not use useFetch with reactive key and execute
+21,Simple DAG,0,Manual event handler function — same problem; misses useFetch + watch(execute) pattern
+21,Perfect Info,1,useAsyncData with immediate: false + watch(() => execute()) — correct
+22,Baseline,0,Directly sets myState.value = undefined — bypasses clearNuxtState entirely
+22,Simple DAG,1,Uses clearNuxtState('myKey'
+22,Perfect Info,1,Uses clearNuxtState('myKey'
+23,Baseline,0,Uses extends: .nuxt/tsconfig.json — old single-config approach
+23,Simple DAG,1,Uses references array with all 4 tsconfig files — correct
+23,Perfect Info,1,Uses references array with all 4 tsconfig files — correct
+24,Baseline,0,Uses nuxt.options.plugins.push with src path — old EJS approach
+24,Simple DAG,0,Invents nuxt.callHook('prepare:virtual') — does not exist
+24,Perfect Info,0,Uses getContents() correctly but calls nuxt.options.build.templates.push instead of addTemplate()
+25,Baseline,0,Flat Nuxt 3 root structure — no app/ folder wrapping middleware
+25,Simple DAG,1,app/ folder with middleware subfolders including index files shown
+25,Perfect Info,0,Shows only a minimal middleware excerpt — missing app/ directory structure
