@@ -6,7 +6,7 @@ from dotenv import load_dotenv  # to read the api key form a .env file
 from google import genai  # to use google generative ai via api key in python
 from google.genai import types  # to be able to disable tool calls
 
-from prompt import basline_prompt, dag_prompt, perfect_prompt
+from condition import basline_prompt, dag_prompt, perfect_prompt
 
 # setup
 load_dotenv()

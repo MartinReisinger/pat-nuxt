@@ -11,13 +11,13 @@
 
 ### experiment/prompt/
 
-- **[basline_prompt.py](src/prompt/basline_prompt.py)**: Implementation of Condition 1.
+- **[basline_prompt.py](src/condition/basline_prompt.py)**: Implementation of Condition 1.
   1. just the task, no further docs or instructions
-- **[dag_prompt.py](src/prompt/dag_prompt.py)**: Implementation of Condition 2.
+- **[dag_prompt.py](src/condition/dag_prompt.py)**: Implementation of Condition 2.
   1. prompt with search instruction
   2. call [dag_api.py](src/dag_api.py)
   3. re-prompt with the search results
-- **[perfect_prompt.py](src/prompt/perfect_prompt.py)**: Implementation of Condition 3.
+- **[perfect_prompt.py](src/condition/perfect_prompt.py)**: Implementation of Condition 3.
   1. the task and the correct documentation of the relevant api change
 
 ## Output
