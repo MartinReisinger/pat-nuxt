@@ -21,7 +21,7 @@ Nuxt 4-specific API information, since Nuxt v4 came out on Jul 16, 2025, and the
 The correct answers for tasks 8, 15, 18, and 20 were only achieved where the Nuxt 4 answer is the logical one. In task
 eight, it chose `route.name` over the removed `route.meta.name` and no JSON.parse-ing of `error.data`.
 
-In conclusion, the baseline without any extra information only passes tasks where the change simply removed a more
+In short, the baseline without any extra information only passes tasks where the change simply removed a more
 complex action, which already had a simpler alternative.
 
 ### Simple DAG (60%)
@@ -63,9 +63,9 @@ prompt, resulting in only two failures:
      },
    })
    ```
-2. **Task 25** The correct output is the complete `app/` directory tree with middleware grouped into named subfolders,
-   each containing an `index.ts`. The "Perfect Info" model produced only a minimal middleware snippet without the `app/`
-   root or the `index.ts` files inside each subfolder. This may Be due to the non-deterministic characteristics of LLMs
+2. **Task 25** The correct output is the complete `app/` directory tree, with middleware grouped into named subfolders, 
+   each containing an `index.ts`. The "Perfect Info" model produced only a small middleware snippet without the `app/`
+   root or the `index.ts` files inside each subfolder. This may be due to the non-deterministic characteristics of LLMs 
    or the openness of the task. The expected result would have been:
    ```
    .
@@ -99,7 +99,7 @@ prompt, resulting in only two failures:
 
 Our simple ripgrep-based DAG with keyword search closes most of the gap between baseline and perfect information,
 improving pass rate from 16% to 60% (more than tripling accuracy!). Yet the 92% ceiling provided perfect information
-shows that there still is a lot of room for improvement. The two main failure modes in the Simple DAG section have the
+shows that there still is a lot of room for improvement. The two main failure types in the Simple DAG section have the
 same root cause: keyword search cannot properly represent semantic meaning. Tasks where the developer does not already
 know the up-to-date API name (the very cases where documentation lookup is needed the most) are exactly where keyword
 search fails.
@@ -114,19 +114,15 @@ perfect-information condition.
 ## Limitations
 
 - **Non-determinism.** Because LLMs are stochastic by nature, re-running the exact same experiment would probably
-  produce
-  a
-  different outcome. The results and subsequent evaluation only represent a single run per condition and task, so one
-  shouldn’t place too much weight on small differences in the pass rate.
+  produce a different outcome. The results and evaluation only represent a single run per condition and task,
+  so one shouldn’t place too much weight on small differences in the pass rate.
 - **Small sample size.** Our experiment has only 25 tasks, meaning each percentage point amounts to 0.25 tasks. Or, to
-  put
-  it differently: a single answer being different could swing the pass rate by 4%.
+  put it differently: a single answer being different could swing the pass rate by 4%.
 - **Single framework.** We consciously scoped our experiment to Nuxt (a Vue-based full-stack framework), specifically
   the
   breaking changes from v3 to v4. So whether the findings generalize to other domains (backend, mobile, embedded, etc.),
   ecosystems (React, Angular, Svelte, etc.), or even other version upgrades (v4 to v5) warrants further investigation.
-- **Single LLM.** Our tasks and conditions were all evaluated using the same large language model (
-  gemini-2.5-flash-lite),
+- **Single LLM.** Our tasks and conditions were all evaluated using the same large language model ( gemini-2.5-flash-lite),
   so we cannot make statements about how a different model with a later knowledge cutoff or better instruction-following
   behavior would behave under these circumstances.
 - **Task design.** All tasks were specifically chosen so that Nuxt v4-specific APIs and configurations had to be used,
@@ -134,4 +130,3 @@ perfect-information condition.
   Nuxt 4 in its training data. In fact, that was the goal. So the task set does not represent a variety of problems one
   might solve on a day-to-day basis, but rather a handpicked assortment of extreme edge cases, showcasing the problems
   caused by knowledge cutoff.
-
