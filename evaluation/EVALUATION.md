@@ -119,8 +119,7 @@ perfect-information condition.
 - **Small sample size.** Our experiment has only 25 tasks, meaning each percentage point amounts to 0.25 tasks. Or, to
   put it differently: a single answer being different could swing the pass rate by 4%.
 - **Single framework.** We consciously scoped our experiment to Nuxt (a Vue-based full-stack framework), specifically
-  the
-  breaking changes from v3 to v4. So whether the findings generalize to other domains (backend, mobile, embedded, etc.),
+  the breaking changes from v3 to v4. So whether the findings generalize to other domains (backend, mobile, embedded, etc.),
   ecosystems (React, Angular, Svelte, etc.), or even other version upgrades (v4 to v5) warrants further investigation.
 - **Single LLM.** Our tasks and conditions were all evaluated using the same large language model ( gemini-2.5-flash-lite),
   so we cannot make statements about how a different model with a later knowledge cutoff or better instruction-following
