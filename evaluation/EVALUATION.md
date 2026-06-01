@@ -1,5 +1,15 @@
 # Experiment Evaluation
 
+## Token Consumption
+
+| Condition    | Tasks | Input Tokens | Output Tokens | Total Tokens |
+|:-------------|------:|-------------:|--------------:|-------------:|
+| Baseline     |    25 |        1,651 |         2,441 |        4,092 |
+| Simple DAG   |    25 |      357,183 |         2,615 |      359,798 |
+| Perfect Info |    25 |        8,372 |         1,923 |       10,295 |
+
+---
+
 ## Pass Rates
 
 | Condition    | Correct | Total | Pass Rate |
@@ -7,6 +17,14 @@
 | Baseline     |    4    |  25   |  **16%**  |
 | Simple DAG   |   15    |  25   |  **60%**  |
 | Perfect Info |   23    |  25   |  **92%**  |
+
+## Combined Metrics
+
+| Condition    | Correct | Pass Rate | Input Tokens | Output Tokens | Total Tokens | Tokens / Task | Tokens / Correct |
+|:-------------|--------:|----------:|-------------:|--------------:|-------------:|--------------:|-----------------:|
+| Baseline     |       4 |       16% |        1,651 |         2,441 |        4,092 |           164 |            1,023 |
+| Simple DAG   |      15 |       60% |      357,183 |         2,615 |      359,798 |        14,392 |           23,987 |
+| Perfect Info |      23 |       92% |        8,372 |         1,923 |       10,295 |           412 |              448 |
 
 ---
 

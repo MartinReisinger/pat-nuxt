@@ -1,0 +1,4 @@
+condition,tasks,correct,pass_rate_percent,input_tokens,output_tokens,total_tokens,tokens_per_task,tokens_per_correct
+Baseline,25,4,16.0,1651,2441,4092,163.68,1023.0
+Simple DAG,25,15,60.0,357183,2615,359798,14391.92,23986.53
+Perfect Info,25,23,92.0,8372,1923,10295,411.8,447.61
